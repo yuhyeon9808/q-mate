@@ -1,4 +1,3 @@
-'use client'
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { ErrorToast } from '@/components/common/CustomToast';
