@@ -17,10 +17,12 @@ export const handleUnauthorized = async () => {
   } catch (e) {
     console.warn('로그아웃 요청 실패:', e);
   }
-  resetAccessToken();
-  resetMatchId();
+
   resetSelectedMenu();
-  localStorage.removeItem('accessToken');
+  resetMatchId();
+  resetAccessToken();
   localStorage.clear();
+  sessionStorage.clear();
+
   window.location.replace('/login');
 };
