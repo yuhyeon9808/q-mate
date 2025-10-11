@@ -31,7 +31,7 @@ export default function Home() {
     router.replace('/login');
   };
 
-  if (accessToken && !matchId) {
+  if (!matchId) {
     router.replace('/invite');
     return;
   }

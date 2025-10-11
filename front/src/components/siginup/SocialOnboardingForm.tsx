@@ -29,7 +29,6 @@ export default function SocialOnboardingForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     mode: 'onChange',
@@ -39,18 +38,11 @@ export default function SocialOnboardingForm() {
     },
   });
 
-  const nickname = watch('nickname');
-  React.useEffect(() => {
-    if (nickname) {
-      sessionStorage.setItem('nickname', nickname);
-    }
-  }, [nickname]);
-
   const onSubmit = (values: FormValues) => {
     if (!birthDate) return;
 
     socialProfileMutate(
-      { nickname: values.nickname.trim(), birthDate },
+      { nickname: values.nickname, birthDate },
       {
         onSuccess: () => router.push('/invite'),
         onError: () => setOpen(true),
@@ -69,6 +61,7 @@ export default function SocialOnboardingForm() {
 
     return true;
   };
+
   return (
     <div className="w-full h-full flex flex-col gap-3 items-center justify-center pb-[70px]">
       <Image src="/images/logo/day_logo.svg" alt="큐메이트" width={173} height={55} />
