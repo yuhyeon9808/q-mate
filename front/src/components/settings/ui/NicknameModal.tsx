@@ -2,7 +2,7 @@ import { Button } from '@/components/common/Button';
 import { ErrorToast, SuccessToast } from '@/components/common/CustomToast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUpdateNickname } from '@/hooks/useSetting';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface nicknameModal {
   open: string;
