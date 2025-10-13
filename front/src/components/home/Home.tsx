@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useMatchIdStore } from '@/store/useMatchIdStore';
 import { useSelectedStore } from '@/store/useSelectedStore';
-import { useUnsubscribePush } from '@/hooks/useUnSubScription';
 
 export default function Home() {
   const router = useRouter();
@@ -15,7 +14,7 @@ export default function Home() {
   const resetMatchId = useMatchIdStore((state) => state.resetMatchId);
   const { setSelectedMenu, resetSelectedMenu } = useSelectedStore();
   const matchId = useMatchIdStore((state) => state.matchId);
-  const { unsubscribe } = useUnsubscribePush();
+
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('accessTokenTime');
@@ -23,7 +22,7 @@ export default function Home() {
     resetAccessToken();
     resetMatchId();
     resetSelectedMenu();
-    unsubscribe();
+
     router.replace('/login');
   };
 

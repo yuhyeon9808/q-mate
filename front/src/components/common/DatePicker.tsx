@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import DatePickerCalendar from '../schedule/ui/DatePickerCalendar';
-import { dateToString, stringToDate } from '@/utils/date';
+import { toKey } from '@/utils/date';
 
 export function DatePicker({
   label,
@@ -17,9 +17,11 @@ export function DatePicker({
   onSelect?: (date: string | undefined) => void;
   initialDate?: string;
 }) {
-  const initial = initialDate ? stringToDate(initialDate) : undefined;
+  const initial = initialDate ? new Date(initialDate) : undefined;
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(initial);
+
+  const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,7 +34,7 @@ export function DatePicker({
             ${!date ? 'text-text-secondary/80' : 'text-text-primary'}
             `}
           >
-            {date ? dateToString(date) : label}
+            {date ? toKey(date) : label}
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -44,7 +46,7 @@ export function DatePicker({
             value={date}
             onChange={(d: Date | undefined) => {
               setDate(d);
-              onSelect?.(d ? dateToString(d) : undefined);
+              onSelect?.(d ? formatDate(d) : undefined);
               setOpen(false);
             }}
           />

@@ -91,6 +91,8 @@ export default function Settings() {
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
+        //구독 해지
+        unsubscribe();
         //선택된 메뉴 리셋
         resetSelectedMenu();
         // exp 리셋
@@ -99,8 +101,6 @@ export default function Settings() {
         resetMatchId();
         // 토큰 리셋
         resetAccessToken();
-        //구독 해지
-        unsubscribe();
         router.replace('/');
       },
       onError: () => {

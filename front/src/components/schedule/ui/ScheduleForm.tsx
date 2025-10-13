@@ -29,7 +29,7 @@ export function ScheduleForm({
   const matchId = useMatchIdStore((state) => state.matchId);
   const textareaRef = useRef<TextTextareaRef>(null);
 
-  const [date, setDate] = useState<string | undefined>(initial?.eventAt ?? undefined);
+  const [date, setDate] = useState<string | undefined>(initial?.eventAt);
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
@@ -50,7 +50,6 @@ export function ScheduleForm({
 
   const handleSubmit = async () => {
     if (!date) return;
-
     const payload: ScheduleFormPayload = {
       matchId: matchId!,
       title,

@@ -26,7 +26,7 @@ public class CustomQuestion {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "match_id", nullable = false)
+  @JoinColumn(nullable = false)
   private Match match;
 
   @CreatedBy
