@@ -98,21 +98,19 @@ export default function AnswerForm({
             onClick={() => setConfirmOpen(true)}
             disabled={!canSubmit}
             aria-busy={submitting}
-            asChild
           >
-            <Link href={fromToday ? '/record' : '/question/list'}>
-              {submitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : mode === 'create' ? (
-                '답변하기'
-              ) : (
-                '수정하기'
-              )}
-            </Link>
+            {submitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : mode === 'create' ? (
+              '답변하기'
+            ) : (
+              '수정하기'
+            )}
           </Button>
         </div>
       </div>
       <ConfirmModal
+        defaultStyle
         open={confirmOpen}
         setOpen={setConfirmOpen}
         title={mode === 'create' ? '답변을 완료하시겠습니까?' : '수정을 완료하시겠습니까?'}
