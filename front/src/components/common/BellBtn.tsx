@@ -3,7 +3,6 @@ import { Bell, Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import {
-  useDeleteNotification,
   useInfiniteNotifications,
   useNotificationDetail,
   useUnreadCount,
@@ -41,7 +40,7 @@ export default function BellBtn() {
     rootMargin: '0px 0px 40px 0px',
     threshold: 0,
   });
-  const { mutate: deleteMutate } = useDeleteNotification();
+
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -158,10 +157,7 @@ export default function BellBtn() {
                   </div>
                   <div
                     className="flex h-full w-10 items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteMutate(item.notificationId);
-                    }}
+                    onClick={() => deleteNotification(item.notificationId)}
                   >
                     <X className="!w-5 !h-5 !text-text-secondary " />
                   </div>
