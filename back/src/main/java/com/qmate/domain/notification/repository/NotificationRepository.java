@@ -3,7 +3,6 @@ package com.qmate.domain.notification.repository;
 import com.qmate.domain.notification.entity.Notification;
 import com.qmate.domain.notification.entity.NotificationCategory;
 import com.qmate.domain.notification.entity.NotificationCode;
-import com.qmate.domain.notification.entity.NotificationResourceType;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +54,4 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
          and n.readAt is null
       """)
   long countAuthorizedUnread(@Param("userId") Long userId);
-
-  boolean existsByUserIdAndCodeAndResourceTypeAndResourceId(
-      Long userId,
-      NotificationCode code,
-      NotificationResourceType resourceType,
-      Long resourceId
-  );
 }

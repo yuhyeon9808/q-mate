@@ -28,8 +28,6 @@ public class DailyQuestionScheduler {
   // 매 정각 실행
   @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
   public void runTopOfHour() {
-    ZonedDateTime now = ZonedDateTime.now(ZONE_KST);
-    alarmService.dispatchTopOfHour(now);     // 정각 QI 전달
-    alarmService.remindAfterSixHours(now);   // 6시간 전 미답변 리마인드
+    alarmService.dispatchTopOfHour(ZonedDateTime.now(ZONE_KST));
   }
 }

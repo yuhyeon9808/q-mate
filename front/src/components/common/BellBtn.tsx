@@ -3,7 +3,6 @@ import { Bell, Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import {
-  useDeleteNotification,
   useInfiniteNotifications,
   useNotificationDetail,
   useUnreadCount,
@@ -41,7 +40,7 @@ export default function BellBtn() {
     rootMargin: '0px 0px 40px 0px',
     threshold: 0,
   });
-  const { mutate: deleteMutate } = useDeleteNotification();
+
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -62,7 +61,7 @@ export default function BellBtn() {
   if (isMobile) {
     return (
       <button
-        className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center cursor-pointer"
+        className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center"
         onClick={() => router.push('/notification')}
       >
         <Bell className="w-7 h-7" />
@@ -101,7 +100,7 @@ export default function BellBtn() {
   return (
     <Sheet modal={false}>
       <SheetTrigger asChild>
-        <div className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center cursor-pointer">
+        <div className="relative flex mr-7 w-fit h-full hover:opacity-80 rounded-md p-2 bell-btn justify-center items-center">
           <Bell className="!w-8 !h-8" />
           {unread > 0 && (
             <div
@@ -124,7 +123,7 @@ export default function BellBtn() {
                 className={cn(
                   `mx-3 p-3 flex items-center gap-4 ${
                     item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
-                  } w-[290px] h-[120x] rounded-sm`,
+                  } w-[290px] h-25 rounded-sm`,
                 )}
               >
                 <div className="flex justify-between w-full h-full items-center">
@@ -132,16 +131,13 @@ export default function BellBtn() {
                     className="flex gap-3 w-50 h-full py-3 cursor-pointer"
                     onClick={() => clickHandler(item)}
                   >
-                    <div>
-                      <CategoryIcons
-                        category={item.category}
-                        className={cn(
-                          'w-[24px] h-[24px] items-start mt-1 nav-item-mob',
-                          item.read === false ? 'active' : 'text-text-unread',
-                        )}
-                      />
-                    </div>
-
+                    <CategoryIcons
+                      category={item.category}
+                      className={cn(
+                        'w-6 h-6 items-start mt-1 nav-item-mob',
+                        item.read === false ? 'active' : 'text-text-unread',
+                      )}
+                    />
                     <div className="flex flex-col text-14 font-normal">
                       <div
                         className={cn(
@@ -151,22 +147,17 @@ export default function BellBtn() {
                         )}
                       >
                         {item.listTitle}
+                        {item.read === false && (
+                          <span className="w-2 h-2 bg-theme-primary rounded-full"></span>
+                        )}
                       </div>
 
                       <p className="text-text-unread">{formatTimeAgo(item.createdAt)}</p>
                     </div>
-                    {item.read === false && (
-                      <div className="flex h-full items-start">
-                        <span className="w-[8px] h-[8px] mt-2 bg-theme-primary rounded-full"></span>
-                      </div>
-                    )}
                   </div>
                   <div
-                    className="flex h-full w-10 items-center cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteMutate(item.notificationId);
-                    }}
+                    className="flex h-full w-10 items-center"
+                    onClick={() => deleteNotification(item.notificationId)}
                   >
                     <X className="!w-5 !h-5 !text-text-secondary " />
                   </div>
