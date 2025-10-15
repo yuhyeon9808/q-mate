@@ -1,11 +1,5 @@
 'use client';
-import {
-  disconnectMatch,
-  fetchDetachedStatus,
-  getMatchInfo,
-  restoreMatch,
-  updateMatchInfo,
-} from '@/api/matches';
+import { disconnectMatch, getMatchInfo, restoreMatch, updateMatchInfo } from '@/api/matches';
 import { MatchInfo } from '@/types/matchType';
 import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 
@@ -42,27 +36,13 @@ export function useUpdateMatchInfo(matchId: number) {
 }
 //매칭 연결 끊기
 export function useDisconnectMatch(matchId: number) {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: () => disconnectMatch(matchId),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['matchInfo', matchId] });
-    },
   });
 }
 //매칭 연결 복구
-export function useRestoreMatch() {
-  const qc = useQueryClient();
+export function useRestoreMatch(matchId: number) {
   return useMutation({
-    mutationFn: (matchId: number) => restoreMatch(matchId),
-    onSuccess: (_data, matchId) => {
-      qc.invalidateQueries({ queryKey: ['matchInfo', matchId] });
-    },
-  });
-}
-//복구 가능한 매칭 아이디 조회
-export function useRestorableMatchId() {
-  return useMutation({
-    mutationFn: () => fetchDetachedStatus(),
+    mutationFn: () => restoreMatch(matchId),
   });
 }

@@ -2,11 +2,7 @@
 import { Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  useDeleteNotification,
-  useInfiniteNotifications,
-  useNotificationDetail,
-} from '@/hooks/useNotificationList';
+import { useInfiniteNotifications, useNotificationDetail } from '@/hooks/useNotificationList';
 import { Skeleton } from '../ui/skeleton';
 import { contentItemType } from '@/types/notification';
 import { cn } from '@/lib/utils';
@@ -14,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useIntersectionObserver } from 'usehooks-ts';
 import { flatNotifications, formatTimeAgo } from '@/utils/notificationUtils';
 import CategoryIcons from './ui/CategoryIcons';
+import { deleteNotification } from '@/api/notification';
 
 export default function Notification() {
   const router = useRouter();
@@ -37,7 +34,7 @@ export default function Notification() {
     rootMargin: '0px 0px 40px 0px',
     threshold: 0,
   });
-  const { mutate: deleteMutate } = useDeleteNotification();
+
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -114,10 +111,7 @@ export default function Notification() {
                 } w-full h-25 cursor-pointer`,
               )}
             >
-              <div
-                className="flex flex-col justify-center w-full"
-                onClick={() => clickHandler(item)}
-              >
+              <div className="flex flex-col justify-center w-full" onClick={() => clickHandler}>
                 <div className="flex gap-3 pl-3 ">
                   <CategoryIcons
                     category={item.category}
@@ -146,10 +140,7 @@ export default function Notification() {
               </div>
               <div
                 className="flex h-full w-20 items-center justify-center cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteMutate(item.notificationId);
-                }}
+                onClick={() => deleteNotification(item.notificationId)}
               >
                 <X className="!w-5 !h-5 text-text-secondary" />
               </div>

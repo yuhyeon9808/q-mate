@@ -1,12 +1,15 @@
 package com.qmate.domain.questioninstance.repository;
 
 
-import static com.qmate.domain.question.entity.QCustomQuestion.customQuestion;
 import static com.qmate.domain.question.entity.QQuestion.question;
+import static com.qmate.domain.question.entity.QCustomQuestion.customQuestion;
+import static com.qmate.domain.question.entity.QQuestionCategory.questionCategory;
 import static com.qmate.domain.questioninstance.entity.QQuestionInstance.questionInstance;
+import static com.qmate.domain.match.QMatch.match;
 import static com.qmate.domain.user.QUser.user;
 
 import com.qmate.domain.questioninstance.entity.QuestionInstanceStatus;
+import com.qmate.domain.questioninstance.entity.QuestionInstance;
 import com.qmate.domain.questioninstance.model.response.QIListItem;
 import com.qmate.domain.questioninstance.model.response.QQIListItem;
 import com.qmate.exception.custom.questioninstance.QIInvalidSortKeyException;
@@ -96,7 +99,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .where(
             questionInstance.match.id.eq(matchId),
             requesterInMatch(requesterId),          // ← 추가: 권한 검증(현재 매치 일치)
-            statusFilter(status),
+            statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
         )
@@ -112,7 +115,7 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
         .where(
             questionInstance.match.id.eq(matchId),
             requesterInMatch(requesterId),          // ← 추가: content와 동일 조건
-            statusFilter(status),
+            statusEq(status),
             deliveredFrom(from),
             deliveredTo(to)
         )
@@ -122,20 +125,16 @@ public class QuestionInstanceQueryRepositoryImpl implements QuestionInstanceQuer
   }
 
   // ---- Predicates (nullable → 무시) ----
+  private BooleanExpression statusEq(QuestionInstanceStatus status) {
+    return status == null ? null : questionInstance.status.eq(status);
+  }
+
   private BooleanExpression deliveredFrom(LocalDateTime from) {
     return from == null ? null : questionInstance.deliveredAt.goe(from);
   }
 
   private BooleanExpression deliveredTo(LocalDateTime to) {
     return to == null ? null : questionInstance.deliveredAt.lt(to);
-  }
-
-  /** 상태 필터: null이면 EXPIRED 자동 제외, 지정되면 해당 상태만 */
-  private BooleanExpression statusFilter(QuestionInstanceStatus status) {
-    if (status == null) {
-      return questionInstance.status.ne(QuestionInstanceStatus.EXPIRED);
-    }
-    return questionInstance.status.eq(status);
   }
 
   /** 요청자의 currentMatchId가 대상 QI의 match.id와 같은지 검증 */

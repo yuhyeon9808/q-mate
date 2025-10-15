@@ -9,7 +9,7 @@ import {
   updateSchedule,
 } from '@/api/schedule';
 import { EventMonthResponse, ScheduleEvent } from '@/types/scheduleType';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 //스케줄 리스트 조회
 export const useScheduleList = (

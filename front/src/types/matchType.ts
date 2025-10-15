@@ -13,8 +13,3 @@ export interface MatchInfo {
   status: 'WAITING' | 'ACTIVE';
   users: MatchUser[];
 }
-
-export interface MatchDetachedInfo {
-  hasDetachedMatch: boolean;
-  matchId: number;
-}
