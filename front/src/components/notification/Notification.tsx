@@ -2,7 +2,11 @@
 import { Loader2, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useInfiniteNotifications, useNotificationDetail } from '@/hooks/useNotificationList';
+import {
+  useDeleteNotification,
+  useInfiniteNotifications,
+  useNotificationDetail,
+} from '@/hooks/useNotificationList';
 import { Skeleton } from '../ui/skeleton';
 import { contentItemType } from '@/types/notification';
 import { cn } from '@/lib/utils';
@@ -10,11 +14,11 @@ import { useRouter } from 'next/navigation';
 import { useIntersectionObserver } from 'usehooks-ts';
 import { flatNotifications, formatTimeAgo } from '@/utils/notificationUtils';
 import CategoryIcons from './ui/CategoryIcons';
-import { deleteNotification } from '@/api/notification';
 
 export default function Notification() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const pendingItemRef = useRef<contentItemType | null>(null);
 
   const { data: detail, isLoading } = useNotificationDetail(selectedId ?? undefined);
 
@@ -34,7 +38,7 @@ export default function Notification() {
     rootMargin: '0px 0px 40px 0px',
     threshold: 0,
   });
-
+  const { mutate: deleteMutate } = useDeleteNotification();
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -42,7 +46,15 @@ export default function Notification() {
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const clickHandler = async (item: contentItemType): Promise<void> => {
+    pendingItemRef.current = item;
     setSelectedId(item.notificationId);
+  };
+  useEffect(() => {
+    if (!selectedId) return;
+    if (isLoading || !detail) return;
+
+    const item = pendingItemRef.current;
+    if (!item || item.notificationId !== selectedId) return;
 
     let href = '/';
     switch (item.category) {
@@ -50,20 +62,21 @@ export default function Notification() {
         href = '/schedule';
         break;
       case 'QUESTION':
-        href = `/question/detail?id=${detail?.resourceId}`;
+        href = `/question/detail?id=${detail.resourceId}`;
         break;
       case 'MATCH':
         href = '/main';
         break;
     }
 
-    try {
-      await router.prefetch(href);
-    } catch (e) {
-      console.error(e);
-    }
-    router.push(href);
-  };
+    (async () => {
+      try {
+        await router.prefetch(href);
+      } catch {}
+      router.push(href);
+      pendingItemRef.current = null;
+    })();
+  }, [selectedId, isLoading, detail, router]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center sm:pt-0 pt-[70px]">
@@ -104,14 +117,17 @@ export default function Notification() {
           {items.map((item: contentItemType) => (
             <li
               key={item.notificationId}
-              onClick={() => setSelectedId(item.notificationId)}
+              // onClick={() => setSelectedId(item.notificationId)}
               className={cn(
                 `mx-3 p-3 flex items-center gap-4 ${
                   item.read === false ? 'bg-unread' : 'bg-read border-read-border border'
                 } w-full h-25 cursor-pointer`,
               )}
             >
-              <div className="flex flex-col justify-center w-full" onClick={() => clickHandler}>
+              <div
+                className="flex flex-col justify-center w-full"
+                onClick={() => clickHandler(item)}
+              >
                 <div className="flex gap-3 pl-3 ">
                   <CategoryIcons
                     category={item.category}
@@ -140,7 +156,10 @@ export default function Notification() {
               </div>
               <div
                 className="flex h-full w-20 items-center justify-center cursor-pointer"
-                onClick={() => deleteNotification(item.notificationId)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteMutate(item.notificationId);
+                }}
               >
                 <X className="!w-5 !h-5 text-text-secondary" />
               </div>
